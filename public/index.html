@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Поиск тендеров — TenderGuru</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="page-header">
+    <h1>Поиск тендеров</h1>
+    <p class="subtitle">Данные предоставляются сервисом TenderGuru</p>
+  </header>
+
+  <main class="layout">
+    <form id="filters-form" class="filters">
+      <fieldset>
+        <legend>Ключевые слова</legend>
+        <input type="text" id="kwords" name="kwords" placeholder="Например: капитальный ремонт кровли" />
+
+        <label class="field-label" for="kwordsWhere">Область поиска</label>
+        <select id="kwordsWhere" name="kwordsWhere">
+          <option value="">Везде</option>
+          <option value="title">В заголовке</option>
+          <option value="docs">В документации</option>
+          <option value="product">В продукции</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <legend>Код ОКПД2</legend>
+        <input type="text" id="okpd" name="okpd" placeholder="Например: 41.20" />
+      </fieldset>
+
+      <fieldset>
+        <legend>Закон</legend>
+        <div class="checkbox-row">
+          <label><input type="checkbox" name="laws" value="44fz" /> 44-ФЗ</label>
+          <label><input type="checkbox" name="laws" value="223fz" /> 223-ФЗ</label>
+          <label><input type="checkbox" name="laws" value="commercial" /> Коммерческие</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Тип заказчика</legend>
+        <div class="checkbox-row">
+          <label><input type="radio" name="customerType" value="" checked /> Любой</label>
+          <label><input type="radio" name="customerType" value="state" /> Государственный</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Электронная площадка</legend>
+        <input type="text" id="etp" name="etp" list="etp-options" placeholder="Начните вводить название ЭТП" />
+        <datalist id="etp-options"></datalist>
+      </fieldset>
+
+      <fieldset>
+        <legend>Цена контракта, руб.</legend>
+        <div class="range-row">
+          <input type="number" id="priceFrom" name="priceFrom" min="0" placeholder="от" />
+          <input type="number" id="priceTo" name="priceTo" min="0" placeholder="до" />
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Дата размещения</legend>
+        <div class="range-row">
+          <input type="date" id="dateFrom" name="dateFrom" />
+          <input type="date" id="dateTo" name="dateTo" />
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Регион</legend>
+        <input type="text" class="filter-box" id="region-filter" placeholder="Фильтр по списку регионов…" />
+        <div class="checkbox-list" id="region-list"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Раздел</legend>
+        <div class="checkbox-list" id="section-list"></div>
+      </fieldset>
+
+      <div class="form-actions">
+        <button type="submit" id="submit-btn">Получить тендеры</button>
+      </div>
+    </form>
+
+    <section class="results">
+      <div id="status-bar" class="status-bar"></div>
+      <div id="results-table-wrap"></div>
+      <div id="pagination" class="pagination"></div>
+    </section>
+  </main>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

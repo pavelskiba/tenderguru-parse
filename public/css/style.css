@@ -1,0 +1,208 @@
+:root {
+  color-scheme: light;
+  --bg: #f5f6f8;
+  --panel: #ffffff;
+  --border: #d9dce1;
+  --text: #1f2430;
+  --muted: #667085;
+  --accent: #2662d9;
+  --accent-dark: #1c4bb0;
+  --error: #c0392b;
+  --ok: #1a7f37;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.page-header {
+  padding: 24px 32px 8px;
+}
+.page-header h1 { margin: 0 0 4px; font-size: 1.6rem; }
+.subtitle { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  padding: 16px 32px 32px;
+  align-items: start;
+}
+
+.filters {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 16px;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+legend {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 0 0 4px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: #fff;
+  color: var(--text);
+}
+
+.field-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.88rem;
+}
+.checkbox-row label { display: flex; align-items: center; gap: 4px; }
+
+.range-row {
+  display: flex;
+  gap: 8px;
+}
+
+.checkbox-list {
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.85rem;
+}
+.checkbox-list label { display: flex; align-items: center; gap: 6px; }
+
+.filter-box { margin-bottom: 2px; }
+
+.form-actions { margin-top: 4px; }
+
+button#submit-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+button#submit-btn:hover { background: var(--accent-dark); }
+button#submit-btn:disabled { opacity: 0.6; cursor: default; }
+
+.results {
+  min-width: 0;
+}
+
+.status-bar {
+  min-height: 20px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+.status-bar.error { color: var(--error); }
+.status-bar.ok { color: var(--ok); }
+
+table.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 0.88rem;
+}
+table.results-table th,
+table.results-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+table.results-table th {
+  background: #eef1f5;
+  font-weight: 600;
+  white-space: nowrap;
+}
+table.results-table tr:last-child td { border-bottom: none; }
+table.results-table a { color: var(--accent); text-decoration: none; }
+table.results-table a:hover { text-decoration: underline; }
+
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+}
+
+.pagination {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 16px;
+}
+.pagination button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+.pagination button:disabled { opacity: 0.5; cursor: default; }
+
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; }
+  .filters { position: static; max-height: none; }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14161c;
+    --panel: #1d2029;
+    --border: #333748;
+    --text: #e7e9ee;
+    --muted: #9aa0ac;
+  }
+  input, select { background: #12141a; color: var(--text); }
+  table.results-table th { background: #262a36; }
+  .pagination button { background: #1d2029; color: var(--text); }
+}
