@@ -7,17 +7,19 @@
   const regionList = document.getElementById('region-list');
   const sectionList = document.getElementById('section-list');
   const regionFilterInput = document.getElementById('region-filter');
-  const etpOptions = document.getElementById('etp-options');
+  const etpSelect = document.getElementById('etp');
+  const etpFilterInput = document.getElementById('etp-filter');
 
   let currentPage = 1;
 
-  function renderCheckboxGroup(container, values, name) {
-    container.innerHTML = values
+  // items: массив {id, name}
+  function renderCheckboxGroup(container, items, name) {
+    container.innerHTML = items
       .map(
-        (value, i) => `
-        <label data-search="${value.toLowerCase()}">
-          <input type="checkbox" name="${name}" value="${escapeAttr(value)}" id="${name}-${i}" />
-          ${escapeHtml(value)}
+        (item, i) => `
+        <label data-search="${escapeAttr(item.name.toLowerCase())}">
+          <input type="checkbox" name="${name}" value="${item.id}" id="${name}-${i}" />
+          ${escapeHtml(item.name)}
         </label>`
       )
       .join('');
@@ -36,13 +38,25 @@
       const data = await res.json();
       renderCheckboxGroup(regionList, data.regions || [], 'regions');
       renderCheckboxGroup(sectionList, data.sections || [], 'sections');
-      etpOptions.innerHTML = (data.etp || [])
-        .map((name) => `<option value="${escapeAttr(name)}"></option>`)
-        .join('');
+      (data.etp || []).forEach((item) => {
+        const opt = document.createElement('option');
+        opt.value = item.id;
+        opt.textContent = item.name;
+        opt.dataset.search = item.name.toLowerCase();
+        etpSelect.appendChild(opt);
+      });
     } catch (err) {
       console.error('Не удалось загрузить справочники', err);
     }
   }
+
+  etpFilterInput.addEventListener('input', () => {
+    const q = etpFilterInput.value.trim().toLowerCase();
+    Array.from(etpSelect.options).forEach((opt) => {
+      if (!opt.value) return; // "Любая"
+      opt.hidden = !opt.dataset.search.includes(q);
+    });
+  });
 
   regionFilterInput.addEventListener('input', () => {
     const q = regionFilterInput.value.trim().toLowerCase();

@@ -51,8 +51,10 @@
 
       <fieldset>
         <legend>Электронная площадка</legend>
-        <input type="text" id="etp" name="etp" list="etp-options" placeholder="Начните вводить название ЭТП" />
-        <datalist id="etp-options"></datalist>
+        <input type="text" class="filter-box" id="etp-filter" placeholder="Фильтр по списку площадок…" />
+        <select id="etp" name="etp" size="6">
+          <option value="">Любая</option>
+        </select>
       </fieldset>
 
       <fieldset>

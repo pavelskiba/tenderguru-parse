@@ -1,59 +1,71 @@
 /**
- * Единая точка соответствия наших фильтров и параметров TenderGuru API.
+ * Соответствие наших фильтров и параметров TenderGuru API2.3.
  *
- * ВАЖНО: сайт tenderguru.ru блокирует автоматическую загрузку своей
- * документации (https://www.tenderguru.ru/api/documentation) для ботов,
- * поэтому часть имён параметров ниже — это общепринятые в API TenderGuru
- * названия, но НЕ ПРОВЕРЕННЫЕ вживую в момент написания кода.
- * Параметры, которые указал сам заказчик (kwords, dtype, api_code,
- * refresh_key) — совпадают с реальным API.
+ * Подтверждено официальной документацией (https://www.tenderguru.ru/api/documentation,
+ * раздел "Список закупок (Россия)") и прямыми тестовыми запросами к API:
  *
- * Перед деплоем откройте https://www.tenderguru.ru/api/documentation
- * (раздел "export", режим dtype=json) и поправьте значения справа от
- * двоеточия на реальные имена параметров — это единственное место,
- * которое нужно менять.
+ *   kwords          — ключевые слова (полнотекстовый поиск)
+ *   kwords_minus     — исключить слова (не используется в этом приложении)
+ *   f                — закон: 44 / 223 / kom
+ *   r{ID}=1          — регион, ID берётся из справочника regions (config/regions.js)
+ *   c{ID}=1          — раздел/категория, ID из справочника cat (config/sections.js)
+ *   e{ID}=1          — электронная площадка, ID из справочника eauc (config/etp.js)
+ *   price1 / price2  — цена контракта от/до
+ *   date_start / date_end — дата размещения от/до, формат дд.мм.гггг
+ *   page             — номер страницы (платная функция)
+ *   dtype            — формат ответа (json)
+ *   api_code         — токен доступа
+ *
+ * ВАЖНО про "область поиска" (везде/заголовок/документация/продукция):
+ * прямого параметра-переключателя для основного метода /export нет.
+ * В документации это отдельные точки входа:
+ *   /api2.3/export               — обычный поиск по тендерам (везде/заголовок)
+ *   /api2.3/export/documentation — поиск по тексту документации закупки
+ *   /api2.3/export/products      — поиск в разрезе продукции (кроме kwords,
+ *                                   поддерживает структуру ОКПД2 через d1..d4)
+ * Поэтому переключение "области поиска" в этом приложении меняет не параметр,
+ * а сам путь запроса — см. lib/tenderguru.js (buildRequest).
+ *
+ * ОКПД2 фильтруется через параметры d1/d2/d3/d4 (сегменты кода через точку)
+ * на эндпоинте /export/products, а не через отдельный параметр "okpd".
  */
 
 module.exports = {
-  // подтверждено заказчиком / документацией
   dtype: 'dtype',
   keywords: 'kwords',
   apiCode: 'api_code',
   refreshCode: 'refresh_key',
   page: 'page',
 
-  // TODO: сверить с https://www.tenderguru.ru/api/documentation
-  keywordsScope: 'kwords_where', // область поиска: значения ниже в KWORDS_SCOPE_VALUES
-  region: 'region', // регионы, через запятую
-  section: 'razdel', // разделы (рубрики), через запятую
-  law: 'zakon', // 44 / 223 / kom
-  customerType: 'customer_type', // государственный / любой
-  etp: 'etp', // электронная площадка
-  priceFrom: 'price_from',
-  priceTo: 'price_to',
-  dateFrom: 'date_from', // дата размещения "от", формат dd.mm.yyyy
-  dateTo: 'date_to', // дата размещения "до"
-  okpd: 'okpd', // код ОКПД2
-  onPage: 'on_page', // количество тендеров на странице
+  law: 'f', // значения: 44 / 223 / kom (см. LAW_VALUES)
+  regionPrefix: 'r', // r{ID}=1
+  sectionPrefix: 'c', // c{ID}=1
+  etpPrefix: 'e', // e{ID}=1
+
+  priceFrom: 'price1',
+  priceTo: 'price2',
+  dateFrom: 'date_start',
+  dateTo: 'date_end',
+
+  // сегменты кода ОКПД2 для /export/products
+  okpdSegments: ['d1', 'd2', 'd3', 'd4'],
 };
 
-// TODO: сверить допустимые значения области поиска с документацией
-module.exports.KWORDS_SCOPE_VALUES = {
-  everywhere: 'all',
-  title: 'title',
-  docs: 'docs',
-  product: 'product',
-};
-
-// TODO: сверить обозначения закона с документацией (возможно 44fz/223fz/commercial)
 module.exports.LAW_VALUES = {
   '44fz': '44',
   '223fz': '223',
   commercial: 'kom',
 };
 
-// TODO: сверить значение для "только государственный заказчик"
-module.exports.CUSTOMER_TYPE_VALUES = {
-  any: '',
-  state: 'gos',
+// TODO: в документации нет отдельного параметра "тип заказчика".
+// Практическое приближение: "Государственный" транслируется в f=44,223
+// (если пользователь не выбрал закон явно чекбоксами) — см. lib/tenderguru.js.
+module.exports.CUSTOMER_TYPE_STATE_LAWS = ['44', '223'];
+
+// Базовые пути API для разных "областей поиска".
+module.exports.ENDPOINTS = {
+  everywhere: '/api2.3/export',
+  title: '/api2.3/export', // отдельного режима "только заголовок" в документации нет
+  docs: '/api2.3/export/documentation',
+  product: '/api2.3/export/products',
 };
