@@ -86,12 +86,18 @@
 
       <fieldset>
         <legend>Расписание автоматической проверки</legend>
-        <label class="field-label" for="cron-preset">Готовые варианты</label>
+
+        <label class="field-label">Время ежедневной отправки</label>
+        <div class="time-wheel" id="time-wheel">
+          <div class="time-wheel-highlight"></div>
+          <div class="time-wheel-col" id="wheel-hours" aria-label="Часы"></div>
+          <div class="time-wheel-sep">:</div>
+          <div class="time-wheel-col" id="wheel-minutes" aria-label="Минуты"></div>
+        </div>
+
+        <label class="field-label" for="cron-preset">Другие варианты (не время каждый день)</label>
         <select id="cron-preset">
           <option value="">Выбрать из списка…</option>
-          <option value="0 9 * * *">Каждый день в 09:00</option>
-          <option value="0 11 * * *">Каждый день в 11:00</option>
-          <option value="0 18 * * *">Каждый день в 18:00</option>
           <option value="0 */6 * * *">Каждые 6 часов</option>
           <option value="0 * * * *">Каждый час</option>
           <option value="0 9 * * 1-5">Каждый будний день в 09:00</option>

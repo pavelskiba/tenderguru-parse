@@ -70,8 +70,99 @@
   });
 
   cronPreset.addEventListener('change', () => {
-    if (cronPreset.value) cronExpr.value = cronPreset.value;
+    if (cronPreset.value) {
+      cronExpr.value = cronPreset.value;
+      syncWheelFromCron(cronPreset.value);
+    }
   });
+
+  // Колесо выбора времени (часы/минуты) — дружелюбная альтернатива ручному
+  // вводу cron-выражения для самого частого случая "каждый день в HH:MM".
+  const WHEEL_ITEM_HEIGHT = 44;
+  const wheelHours = document.getElementById('wheel-hours');
+  const wheelMinutes = document.getElementById('wheel-minutes');
+
+  function buildWheelColumn(col, count) {
+    const padTop = document.createElement('div');
+    padTop.className = 'time-wheel-col-pad';
+    col.appendChild(padTop);
+
+    for (let i = 0; i < count; i++) {
+      const item = document.createElement('div');
+      item.className = 'time-wheel-item';
+      item.textContent = String(i).padStart(2, '0');
+      item.dataset.value = String(i);
+      col.appendChild(item);
+    }
+
+    const padBottom = document.createElement('div');
+    padBottom.className = 'time-wheel-col-pad';
+    col.appendChild(padBottom);
+  }
+
+  buildWheelColumn(wheelHours, 24);
+  buildWheelColumn(wheelMinutes, 60);
+
+  function getWheelValue(col) {
+    return Math.round(col.scrollTop / WHEEL_ITEM_HEIGHT);
+  }
+
+  function setWheelValue(col, value, smooth) {
+    col.scrollTo({ top: value * WHEEL_ITEM_HEIGHT, behavior: smooth ? 'smooth' : 'instant' });
+    highlightWheelSelection(col);
+  }
+
+  function highlightWheelSelection(col) {
+    const idx = getWheelValue(col);
+    col.querySelectorAll('.time-wheel-item').forEach((el) => {
+      el.classList.toggle('selected', Number(el.dataset.value) === idx);
+    });
+  }
+
+  function syncCronFromWheel() {
+    const hour = getWheelValue(wheelHours);
+    const minute = getWheelValue(wheelMinutes);
+    cronExpr.value = `${minute} ${hour} * * *`;
+    cronPreset.value = '';
+  }
+
+  function syncWheelFromCron(expr) {
+    const match = /^(\d{1,2})\s+(\d{1,2})\s+\*\s+\*\s+\*$/.exec((expr || '').trim());
+    if (!match) return;
+    const minute = Math.min(59, Math.max(0, Number(match[1])));
+    const hour = Math.min(23, Math.max(0, Number(match[2])));
+    setWheelValue(wheelHours, hour, false);
+    setWheelValue(wheelMinutes, minute, false);
+  }
+
+  let wheelScrollTimers = {};
+  function attachWheelScroll(col, key) {
+    col.addEventListener('scroll', () => {
+      highlightWheelSelection(col);
+      clearTimeout(wheelScrollTimers[key]);
+      wheelScrollTimers[key] = setTimeout(() => {
+        setWheelValue(col, getWheelValue(col), true);
+        syncCronFromWheel();
+      }, 120);
+    });
+  }
+  attachWheelScroll(wheelHours, 'hours');
+  attachWheelScroll(wheelMinutes, 'minutes');
+
+  function attachWheelClick(col) {
+    col.addEventListener('click', (e) => {
+      const item = e.target.closest('.time-wheel-item');
+      if (!item) return;
+      setWheelValue(col, Number(item.dataset.value), true);
+      syncCronFromWheel();
+    });
+  }
+  attachWheelClick(wheelHours);
+  attachWheelClick(wheelMinutes);
+
+  cronExpr.addEventListener('change', () => syncWheelFromCron(cronExpr.value));
+
+  syncWheelFromCron(cronExpr.value || '0 9 * * *');
 
   function getCheckedValues(name) {
     return Array.from(form.querySelectorAll(`input[name="${name}"]:checked`)).map((el) => el.value);
@@ -368,6 +459,7 @@
     if (s) {
       cronExpr.value = s.cron || '';
       scheduleEnabled.checked = !!s.enabled;
+      syncWheelFromCron(s.cron);
     }
 
     const d = settings.delivery;
