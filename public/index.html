@@ -84,8 +84,41 @@
         <div class="checkbox-list" id="section-list"></div>
       </fieldset>
 
+      <fieldset>
+        <legend>Расписание автоматической проверки</legend>
+        <label class="field-label" for="cron-preset">Готовые варианты</label>
+        <select id="cron-preset">
+          <option value="">Выбрать из списка…</option>
+          <option value="0 9 * * *">Каждый день в 09:00</option>
+          <option value="0 11 * * *">Каждый день в 11:00</option>
+          <option value="0 18 * * *">Каждый день в 18:00</option>
+          <option value="0 */6 * * *">Каждые 6 часов</option>
+          <option value="0 * * * *">Каждый час</option>
+          <option value="0 9 * * 1-5">Каждый будний день в 09:00</option>
+        </select>
+
+        <label class="field-label" for="cron-expr">Cron-выражение</label>
+        <input type="text" id="cron-expr" name="cronExpr" placeholder="0 11 * * *" />
+
+        <label class="checkbox-row" style="margin-top: 4px">
+          <input type="checkbox" id="schedule-enabled" name="scheduleEnabled" />
+          Включить автоматический запуск по расписанию
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Куда отправлять новые тендеры</legend>
+        <div class="checkbox-row">
+          <label><input type="checkbox" id="delivery-email" name="delivery" value="email" /> Email</label>
+          <label><input type="checkbox" id="delivery-telegram" name="delivery" value="telegram" /> Telegram</label>
+          <label><input type="checkbox" id="delivery-sheets" name="delivery" value="sheets" /> Google Sheets</label>
+        </div>
+      </fieldset>
+
       <div class="form-actions">
-        <button type="submit" id="submit-btn">Получить тендеры</button>
+        <button type="submit" id="submit-btn">Сохранить настройки</button>
+        <button type="button" id="preview-btn">Предпросмотр результатов</button>
+        <button type="button" id="run-now-btn">Проверить сейчас и отправить</button>
       </div>
     </form>
 
@@ -93,6 +126,9 @@
       <div id="status-bar" class="status-bar"></div>
       <div id="results-table-wrap"></div>
       <div id="pagination" class="pagination"></div>
+
+      <h2 class="section-title">Журнал автоматических проверок</h2>
+      <div id="scheduler-log"></div>
     </section>
   </main>
 

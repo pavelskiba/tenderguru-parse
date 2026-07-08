@@ -111,21 +111,67 @@ select {
 
 .filter-box { margin-bottom: 2px; }
 
-.form-actions { margin-top: 4px; }
+.form-actions {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-button#submit-btn {
+.form-actions button {
   width: 100%;
   padding: 10px;
-  background: var(--accent);
-  color: #fff;
-  border: none;
   border-radius: 7px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
 }
+.form-actions button:disabled { opacity: 0.6; cursor: default; }
+
+button#submit-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+}
 button#submit-btn:hover { background: var(--accent-dark); }
-button#submit-btn:disabled { opacity: 0.6; cursor: default; }
+
+button#preview-btn,
+button#run-now-btn {
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+button#preview-btn:hover,
+button#run-now-btn:hover { background: var(--bg); }
+
+.section-title {
+  margin: 28px 0 12px;
+  font-size: 1.1rem;
+}
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 0.85rem;
+}
+.log-table th,
+.log-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+.log-table th { background: #eef1f5; font-weight: 600; white-space: nowrap; }
+.log-table tr:last-child td { border-bottom: none; }
+.log-status { font-weight: 600; }
+.log-status.ok { color: var(--ok); }
+.log-status.error { color: var(--error); }
+.log-status.partial { color: #b8860b; }
+.log-status.skipped { color: var(--muted); }
 
 .results {
   min-width: 0;
@@ -205,4 +251,7 @@ table.results-table a:hover { text-decoration: underline; }
   input, select { background: #12141a; color: var(--text); }
   table.results-table th { background: #262a36; }
   .pagination button { background: #1d2029; color: var(--text); }
+  button#preview-btn,
+  button#run-now-btn { background: #1d2029; color: var(--text); }
+  .log-table th { background: #262a36; }
 }
